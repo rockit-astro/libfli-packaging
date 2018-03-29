@@ -4,6 +4,13 @@
 #        The source code can be found at 
 #        http://www.flicamera.com/software/index.html
 ################################################################################
+RPMBUILD = rpmbuild --define "_topdir %(pwd)/build" \
+        --define "_builddir %{_topdir}" \
+        --define "_rpmdir %{_topdir}" \
+        --define "_srcrpmdir %{_topdir}" \
+        --define "_sourcedir %(pwd)"
+
+
 UNAME	= $(shell uname -s)
 ifeq ($(findstring BSD, $(UNAME)), BSD)
   UNAME	= BSD
@@ -53,6 +60,12 @@ ALLOBJ	= $(SYS) $(DEBUG) $(MEM) $(IO) $(CAM) $(FILT)
 
 libfli.so: libfli.o $(ALLOBJ)
 	$(CC) -shared -o $@ $^
+
+package: libfli.so
+	mkdir -p build
+	${RPMBUILD} -ba rasa-libfli.spec
+	mv build/x86_64/*.rpm .
+	rm -rf build
 
 install: libfli.so
 	cp libfli.so /usr/local/lib
