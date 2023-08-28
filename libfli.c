@@ -606,11 +606,9 @@ LIBFLIAPI FLIGetVisibleArea(flidev_t dev, long* ul_x, long* ul_y,
 
    @param domain Domain to apply to \texttt{name} for device opening.
    This is a bitwise ORed combination of interface method and device
-   type.  Valid interfaces include \texttt{FLIDOMAIN_PARALLEL_PORT},
-   \texttt{FLIDOMAIN_USB}, \texttt{FLIDOMAIN_SERIAL}, and
-   \texttt{FLIDOMAIN_INET}.  Valid device types include
-   \texttt{FLIDEVICE_CAMERA}, \texttt{FLIDOMAIN_FILTERWHEEL}, and
-   \texttt{FLIDOMAIN_FOCUSER}.
+   type.  Valid interfaces include \texttt{FLIDOMAIN_USB}.
+   Valid device types include \texttt{FLIDEVICE_CAMERA},
+   \texttt{FLIDOMAIN_FILTERWHEEL}, and \texttt{FLIDOMAIN_FOCUSER}.
 
    @return Zero on success.
    @return Non-zero on failure.
@@ -1232,11 +1230,9 @@ LIBFLIAPI FLIControlBackgroundFlush(flidev_t dev, flibgflush_t bgflush)
 
    @param domain Domain to list the devices of.  This is a bitwise
    ORed combination of interface method and device type.  Valid
-   interfaces include \texttt{FLIDOMAIN_PARALLEL_PORT},
-   \texttt{FLIDOMAIN_USB}, \texttt{FLIDOMAIN_SERIAL}, and
-   \texttt{FLIDOMAIN_INET}.  Valid device types include
-   \texttt{FLIDEVICE_CAMERA}, \texttt{FLIDOMAIN_FILTERWHEEL}, and
-   \texttt{FLIDOMAIN_FOCUSER}.
+   interfaces include \texttt{FLIDOMAIN_USB}.
+   Valid device types include \texttt{FLIDEVICE_CAMERA},
+   \texttt{FLIDOMAIN_FILTERWHEEL}, and \texttt{FLIDOMAIN_FOCUSER}.
 
    @param names Pointer to where the device name list will be placed.
 
@@ -1650,9 +1646,7 @@ LIBFLIAPI FLICreateList(flidomain_t domain)
   }
   else
   {
-    domord[0] = domain | FLIDOMAIN_PARALLEL_PORT;
-    domord[1] = domain | FLIDOMAIN_USB;
-    domord[2] = domain | FLIDOMAIN_SERIAL;
+    domord[0] = domain | FLIDOMAIN_USB;
   }
 
   i = 0;

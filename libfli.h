@@ -56,9 +56,7 @@ typedef long flidev_t;
 /**
    The domain of an FLI device.  This consists of a bitwise ORed
    combination of interface method and device type.  Valid interfaces
-   are \texttt{FLIDOMAIN_PARALLEL_PORT}, \texttt{FLIDOMAIN_USB},
-   \texttt{FLIDOMAIN_SERIAL}, and \texttt{FLIDOMAIN_INET}.  Valid
-   device types are \texttt{FLIDEVICE_CAMERA},
+   are \texttt{FLIDOMAIN_USB}.  Valid device types are \texttt{FLIDEVICE_CAMERA},
    \texttt{FLIDOMAIN_FILTERWHEEL}, and \texttt{FLIDOMAIN_FOCUSER}.
 
    @see FLIOpen
@@ -67,12 +65,7 @@ typedef long flidev_t;
 typedef long flidomain_t;
 
 #define FLIDOMAIN_NONE (0x00)
-#define FLIDOMAIN_PARALLEL_PORT (0x01)
 #define FLIDOMAIN_USB (0x02)
-#define FLIDOMAIN_SERIAL (0x03)
-#define FLIDOMAIN_INET (0x04)
-#define FLIDOMAIN_SERIAL_19200 (0x05)
-#define FLIDOMAIN_SERIAL_1200 (0x06)
 
 #define FLIDEVICE_NONE (0x000)
 #define FLIDEVICE_CAMERA (0x100)

@@ -49,7 +49,6 @@
 #include "libfli-debug.h"
 #include "libfli-mem.h"
 #include "libfli-camera.h"
-#include "libfli-camera-parport.h"
 #include "libfli-camera-usb.h"
 
 const fliccdinfo_t knowndev[] = {
@@ -79,15 +78,12 @@ const fliccdinfo_t knowndev[] = {
 /* Common camera routines */
 static long fli_camera_get_pixel_size(flidev_t dev,
 				      double *pixel_x, double *pixel_y);
-#define fli_camera_parport_get_pixel_size fli_camera_get_pixel_size
 #define fli_camera_usb_get_pixel_size fli_camera_get_pixel_size
 
 static long fli_camera_set_frame_type(flidev_t dev, fliframe_t frametype);
-#define fli_camera_parport_set_frame_type fli_camera_set_frame_type
 #define fli_camera_usb_set_frame_type fli_camera_set_frame_type
 
 static long fli_camera_set_flushes(flidev_t dev, long nflushes);
-#define fli_camera_parport_set_flushes fli_camera_set_flushes
 #define fli_camera_usb_set_flushes fli_camera_set_flushes
 
 long fli_camera_open(flidev_t dev)
@@ -103,10 +99,6 @@ long fli_camera_open(flidev_t dev)
 
   switch (DEVICE->domain)
   {
-		case FLIDOMAIN_PARALLEL_PORT:
-			r = fli_camera_parport_open(dev);
-			break;
-
 		case FLIDOMAIN_USB:
 			r = fli_camera_usb_open(dev);
 			break;
@@ -187,10 +179,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_get_pixel_size(dev, pixel_x, pixel_y);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_get_pixel_size(dev, pixel_x, pixel_y);
 						break;
@@ -215,10 +203,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_get_array_area(dev, ul_x, ul_y, lr_x, lr_y);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_get_array_area(dev, ul_x, ul_y, lr_x, lr_y);
 						break;
@@ -243,10 +227,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_get_visible_area(dev, ul_x, ul_y, lr_x, lr_y);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_get_visible_area(dev, ul_x, ul_y, lr_x, lr_y);
 						break;
@@ -268,10 +248,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_set_exposure_time(dev, exptime);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_set_exposure_time(dev, exptime);
 						break;
@@ -296,10 +272,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_set_image_area(dev, ul_x, ul_y, lr_x, lr_y);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_set_image_area(dev, ul_x, ul_y, lr_x, lr_y);
 						break;
@@ -321,10 +293,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_set_hbin(dev, hbin);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_set_hbin(dev, hbin);
 						break;
@@ -346,10 +314,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_set_vbin(dev, vbin);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_set_vbin(dev, vbin);
 						break;
@@ -371,10 +335,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_set_frame_type(dev, frametype);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_set_frame_type(dev, frametype);
 						break;
@@ -404,10 +364,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 			
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = DEVICE->fli_command(dev, FLI_CONTROL_SHUTTER, (long) FLI_SHUTTER_CLOSE);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_cancel_exposure(dev);
 						break;
@@ -429,9 +385,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_get_exposure_status(dev, timeleft);
-					break;
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_get_exposure_status(dev, timeleft);
 					break;
@@ -552,10 +505,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_set_temperature(dev, temperature);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_set_temperature(dev, temperature);
 						break;
@@ -579,10 +528,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_get_temperature(dev, temperature);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_read_temperature(dev, channel, temperature);
 						break;
@@ -604,10 +549,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_get_temperature(dev, temperature);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_get_temperature(dev, temperature);
 						break;
@@ -654,10 +595,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_grab_row(dev, buf, width);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_grab_row(dev, buf, width);
 						break;
@@ -675,10 +612,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 			{
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_expose_frame(dev);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_expose_frame(dev);
 						break;
@@ -759,10 +692,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_flush_rows(dev, rows, repeat);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_flush_rows(dev, rows, repeat);
 						break;
@@ -784,10 +713,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_set_flushes(dev, nflushes);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_set_flushes(dev, nflushes);
 						break;
@@ -809,10 +734,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-				case FLIDOMAIN_PARALLEL_PORT:
-					r = fli_camera_parport_set_bit_depth(dev, bitdepth);
-					break;
-
 				case FLIDOMAIN_USB:
 					r = fli_camera_usb_set_bit_depth(dev, bitdepth);
 					break;
@@ -834,10 +755,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-				case FLIDOMAIN_PARALLEL_PORT:
-					r = fli_camera_parport_read_ioport(dev, ioportset);
-					break;
-
 				case FLIDOMAIN_USB:
 					r = fli_camera_usb_read_ioport(dev, ioportset);
 					break;
@@ -859,10 +776,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-				case FLIDOMAIN_PARALLEL_PORT:
-					r = fli_camera_parport_write_ioport(dev, ioportset);
-					break;
-
 				case FLIDOMAIN_USB:
 					r = fli_camera_usb_write_ioport(dev, ioportset);
 					break;
@@ -884,10 +797,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-				case FLIDOMAIN_PARALLEL_PORT:
-					r = fli_camera_parport_configure_ioport(dev, ioportset);
-					break;
-
 				case FLIDOMAIN_USB:
 					r = fli_camera_usb_configure_ioport(dev, ioportset);
 					break;
@@ -966,10 +875,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 					switch (DEVICE->domain)
 					{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = fli_camera_parport_control_shutter(dev, shutter);
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_control_shutter(dev, shutter);
 						break;
@@ -995,10 +900,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-				case FLIDOMAIN_PARALLEL_PORT:
-					r = -EFAULT;
-					break;
-
 				case FLIDOMAIN_USB:
 					r = fli_camera_usb_control_bgflush(dev, bgflush);
 					break;
@@ -1020,10 +921,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = -EINVAL;
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_get_cooler_power(dev, cooler_power);
 						break;
@@ -1046,10 +943,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 				*camera_status = 0xffffffff;
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = 0;
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_get_camera_status(dev, camera_status);
 						break;
@@ -1072,10 +965,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 				*camera_mode = 0;
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = 0;
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_get_camera_mode(dev, camera_mode);
 						break;
@@ -1097,10 +986,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = 0;
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_set_camera_mode(dev, camera_mode);
 						break;
@@ -1128,18 +1013,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						if (camera_mode == 0)
-						{
-							r = 0;
-							strncpy(buf, "Default Mode", len - 1);
-						}
-						else
-						{
-							r = -EINVAL;
-						}
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_get_camera_mode_string(dev, camera_mode, buf, len);
 						break;
@@ -1157,10 +1030,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 			{
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = -EINVAL;
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_trigger_exposure(dev);
 						break;
@@ -1178,10 +1047,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 			{
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = -EINVAL;
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_end_exposure(dev);
 						break;
@@ -1209,10 +1074,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = -EINVAL;
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_read_eeprom(dev, loc, address, length, rbuf);
 						break;
@@ -1240,10 +1101,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 
 				switch (DEVICE->domain)
 				{
-					case FLIDOMAIN_PARALLEL_PORT:
-						r = -EINVAL;
-						break;
-
 					case FLIDOMAIN_USB:
 						r = fli_camera_usb_write_eeprom(dev, loc, address, length, rbuf);
 						break;
