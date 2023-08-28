@@ -220,21 +220,7 @@ typedef long flitdiflags_t;
 #define FLI_PIXEL_DEFECT_POINT_DARK (0x30)
 
 #ifndef LIBFLIAPI
-#  ifdef _WIN32
-#    ifdef _LIB
-#      define LIBFLIAPI long __stdcall
-#    else
-#      ifdef _USRDLL
-/* The module definition file precludes using __declspec(dllexport) */
-/*#        define LIBFLIAPI __declspec(dllexport) long __stdcall    */
-#      define LIBFLIAPI long __stdcall
-#      else
-#        define LIBFLIAPI __declspec(dllimport) long __stdcall
-#      endif
-#    endif
-#  else
 #    define LIBFLIAPI long
-#  endif
 #endif
 
 /* Library API Function prototypes */
@@ -243,11 +229,7 @@ typedef long flitdiflags_t;
 extern "C" {  // only need to export C interface if used by C++ source code
 #endif
 
-#ifdef WIN32
-void __cdecl FLIDebug(int level, char *format, ...);
-#else
 void FLIDebug(int level, char *format, ...);
-#endif
 
 LIBFLIAPI FLIOpen(flidev_t *dev, char *name, flidomain_t domain);
 LIBFLIAPI FLISetDebugLevel(char *host, flidebug_t level);

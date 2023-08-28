@@ -237,10 +237,6 @@ char *xstrdup(const char *s)
 {
   char *tmp;
 
-#ifdef _WIN32
-#define strdup _strdup
-#endif
-
   if ((tmp = strdup(s)) == NULL)
     return NULL;
 
@@ -306,11 +302,7 @@ int xasprintf(char **strp, const char *fmt, ...)
   {
     /* Try to print in the allocated space. */
     va_start(ap, fmt);
-#ifdef _WIN32
-    n = _vsnprintf (p, size, fmt, ap);
-#else
     n = vsnprintf (p, size, fmt, ap);
-#endif
     va_end(ap);
     /* If that worked, send the string. */
     if (n > -1 && n < size)

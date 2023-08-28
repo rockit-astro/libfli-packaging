@@ -53,13 +53,6 @@
 #define LIBFLIAPI long __stdcall
 #endif
 
-#ifdef _WIN32
-#ifndef LIBFLIAPI
-//#define LIBFLIAPI __declspec(dllexport) long __stdcall
-#endif
-#define stricmp _stricmp
-#endif
-
 #include "libfli.h"
 #include "libfli-sys.h"
 #include "libfli-debug.h"

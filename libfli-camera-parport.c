@@ -41,12 +41,8 @@
 
 */
 
-#ifdef _WIN32
-#include <winsock.h>
-#else
 #include <sys/param.h>
 #include <netinet/in.h>
-#endif
 
 #include <stdio.h>
 #include <errno.h>

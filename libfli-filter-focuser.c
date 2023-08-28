@@ -41,13 +41,9 @@
 
 */
 
-#ifdef _WIN32
-//#include <winsock.h>
-#else
 #include <unistd.h>
 #include <sys/param.h>
 #include <netinet/in.h>
-#endif
 
 #include <stdio.h>
 #include <errno.h>
@@ -1024,11 +1020,7 @@ static long fli_stepmotor(flidev_t dev, long steps, long block)
 	//			debug(FLIDEBUG_INFO, "FWREV: 0x%02x", DEVICE->devinfo.fwrev);
 				if ((DEVICE->devinfo.fwrev & 0x0fff) < 0x42)
 				{
-	#ifdef _WIN32
-				Sleep(50);
-	#else
 				usleep(50000);
-	#endif
 				}
 			}
 
@@ -1036,11 +1028,7 @@ static long fli_stepmotor(flidev_t dev, long steps, long block)
 			stepsleft = 0;
 			while ( (stepsleft != 0x7000) && (block != 0) )
 			{
-	#ifdef _WIN32
-				Sleep(100);
-	#else
 				usleep(100000);
-	#endif
 				buf[0] = htons(0x7000);
 				IO(dev, buf, &wlen, &rlen);
 				stepsleft = ntohs(buf[0]);
@@ -1093,11 +1081,7 @@ static long fli_stepmotor(flidev_t dev, long steps, long block)
 		stepsleft = -1;
 		while ( (stepsleft != 0) && (block != 0) )
 		{
-#ifdef _WIN32
-			Sleep(100);
-#else
 			usleep(100000);
-#endif
 			CLEARIO;
 			wlen = 12; rlen = 12;
 			IOWRITE_U16(_buf, 0, 0x7000);
@@ -1264,11 +1248,7 @@ static long fli_homedevice(flidev_t dev, long block)
 		stepsleft = 0x04;
 		while ( ((stepsleft & 0x04) != 0) && (block != 0) )
 		{
-#ifdef _WIN32
-			Sleep(100);
-#else
 			usleep(100000);
-#endif
 		buf[0] = htons(0xb000);
     IO(dev, buf, &wlen, &rlen);
     stepsleft = ntohs(buf[0]);
@@ -1437,11 +1417,7 @@ static long fli_setfilterpos(flidev_t dev, long pos)
 
 		while (stepsleft != 0x7000)
 		{
-#ifdef _WIN32
-			Sleep(100);
-#else
 			usleep(100000);
-#endif
 			CLEARIO;
 			wlen = 2; rlen = 2;
 			IOWRITE_U16(_buf, 0, 0x7000);

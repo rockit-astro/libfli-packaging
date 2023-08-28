@@ -41,14 +41,9 @@
 
 */
 
-#ifdef _WIN32
-#include <winsock.h>
-#define strncasecmp _strnicmp
-#else
 #include <sys/param.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#endif
 
 #include <stdio.h>
 #include <errno.h>
@@ -224,60 +219,6 @@ long fli_camera_usb_open(flidev_t dev)
 
 			/* This is added as a hack to allow for overscan of CCD
 			 * this should be moved somewhere else */
-#ifdef _WIN32
-			/* Check the registry to determine if we are overriding any settings */
-			{
-				HKEY hKey;
-				DWORD overscan_x = 0, overscan_y = 0;
-				DWORD whole_array = 0;
-				DWORD len;
-
-				if (RegOpenKey(HKEY_LOCAL_MACHINE,
-					"SOFTWARE\\Finger Lakes Instrumentation\\libfli",
-					&hKey) == ERROR_SUCCESS)
-				{
-					/* Check for overscan data */
-
-					len = sizeof(DWORD);
-					if (RegQueryValueEx(hKey, "overscan_x", NULL, NULL, (LPBYTE) &overscan_x, &len) == ERROR_SUCCESS)
-					{
-						debug(FLIDEBUG_INFO, "Found a request for horizontal overscan of %d pixels.", overscan_x);
-					}
-
-					len = sizeof(DWORD);
-					if (RegQueryValueEx(hKey, "overscan_y", NULL, NULL, (LPBYTE) &overscan_y, &len) == ERROR_SUCCESS)
-					{
-						debug(FLIDEBUG_INFO, "Found a request for vertical overscan of %d pixels.", overscan_y);
-					}
-
-					len = sizeof(DWORD);
-					RegQueryValueEx(hKey, "whole_array", NULL, NULL, (LPBYTE) &whole_array, &len);
-
-					cam->ccd.array_area.ul.x = 0;
-					cam->ccd.array_area.ul.y = 0;
-					cam->ccd.array_area.lr.x += overscan_x;
-					cam->ccd.array_area.lr.y += overscan_y;
-
-					if (whole_array == 0)
-					{
-						cam->ccd.visible_area.lr.x += overscan_x;
-						cam->ccd.visible_area.lr.y += overscan_y;
-					}
-					else
-					{
-						cam->ccd.visible_area.ul.x = 0;
-						cam->ccd.visible_area.ul.y = 0;
-						cam->ccd.visible_area.lr.x = cam->ccd.array_area.lr.x;
-						cam->ccd.visible_area.lr.y = cam->ccd.array_area.lr.y;
-					}
-					RegCloseKey(hKey);
-				}
-				else
-				{
-					debug(FLIDEBUG_INFO, "Could not find registry key.");
-				}
-			}
-#endif
 
 			/* Initialize all variables to something */
 
@@ -375,28 +316,6 @@ long fli_camera_usb_open(flidev_t dev)
 				DEVICE->devinfo.devnam = xstrndup((char *) &buf[0], 32);
 				DEVICE->devinfo.model = xstrndup((char *) &buf[32], 32);
 			}
-
-//#ifdef _WIN32_
-//			/* Check the registry to determine if we are overriding any settings */
-//			{
-//				HKEY hKey;
-//				DWORD t = 0;
-//				DWORD len;
-//
-//				if (RegOpenKey(HKEY_CURRENT_USER,
-//					"SOFTWARE\\Finger Lakes Instrumentation\\libfli",
-//					&hKey) == ERROR_SUCCESS)
-//				{
-//					len = sizeof(DWORD);
-//					if (RegQueryValueEx(hKey, "fw_rev", NULL, NULL, (LPBYTE) &t, &len) == ERROR_SUCCESS)
-//					{
-//						debug(FLIDEBUG_INFO, "Found a request to override camera FWREV.");
-//					}
-//					RegCloseKey(hKey);
-//					DEVICE->devinfo.fwrev = t;
-//				}
-//			}
-//#endif
 
 			if (DEVICE->devinfo.fwrev == 0x0100)
 				DEVICE->devinfo.fwrev = 0x0101;
@@ -1231,11 +1150,6 @@ long fli_camera_usb_grab_row(flidev_t dev, void *buff, size_t width)
 				if ((rlen < rtotal) && (cam->grabrowindex > 0))
 				{
 					char b[2048];
-
-#ifdef _WIN32
-					sprintf(b, "Pad, L:%d\n", cam->grabrowindex);
-					OutputDebugString(b);
-#endif
 					debug(FLIDEBUG_FAIL, "Transfer did not complete, padding...");
 					memset(&cam->gbuf[cam->grabrowcounttot], 0x00, (rtotal - rlen));
 				}
