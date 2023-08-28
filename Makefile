@@ -11,36 +11,10 @@ RPMBUILD = rpmbuild --define "_topdir %(pwd)/build" \
         --define "_sourcedir %(pwd)"
 
 
-UNAME	= $(shell uname -s)
-ifeq ($(findstring BSD, $(UNAME)), BSD)
-  UNAME	= BSD
-endif
-
-VPATH	= unix
-ifeq ($(UNAME), Linux)
-  VPATH	+= unix/linux
-endif
-ifeq ($(UNAME), BSD)
-  VPATH	+= unix/bsd
-endif
-ifeq ($(UNAME), Darwin)
-  VPATH	+= unix/osx
-endif
-
 DIR	= $(shell pwd)
 CC	= gcc
-INC	= $(DIR) $(DIR)/unix
+INC	= $(DIR)
 CFLAGS	= -fPIC -Wall -O2 -g $(patsubst %, -I%, $(INC))
-
-ifeq ($(UNAME), Darwin)
-	CFLAGS += -arch i386 -arch x86_64
-	INC += $(DIR)/unix/osx /Developer/SDKs/MacOSX10.7.sdk/usr/include
-	LIBS =IOkit
-	LIBPATH = /usr/local/lib /sw/lib /usr/lib/ /System/Library/Frameworks/CoreFoundation.framework
-	LDLIBS = $(patsubst %, -l%, $(LIBS))
-	LOADLIBES = $(patsubst %, -L%, $(LIBPATH))
-endif
-
 AR	= ar
 ARFLAGS	= -rus
 
@@ -48,9 +22,7 @@ SYS	= libfli-sys.o
 DEBUG	= libfli-debug.o
 MEM	= libfli-mem.o
 USB_IO	= libfli-usb.o libfli-usb-sys.o
-ifeq ($(UNAME), Linux)
-  PPORT_IO	= libfli-parport.o
-endif
+PPORT_IO	= libfli-parport.o
 SERIAL_IO	= libfli-serial.o
 IO	= $(USB_IO) $(PPORT_IO) $(SERIAL_IO)
 CAM	= libfli-camera.o libfli-camera-parport.o libfli-camera-usb.o
