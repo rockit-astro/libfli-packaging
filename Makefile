@@ -28,7 +28,7 @@ FILT	= libfli-filter-focuser.o
 ALLOBJ	= $(SYS) $(DEBUG) $(MEM) $(IO) $(CAM) $(FILT)
 
 libfli.so: libfli.o $(ALLOBJ)
-	$(CC) -shared -o $@ $^
+	$(CC) -shared -lusb-1.0 -o $@ $^
 
 package: libfli.so
 	mkdir -p build

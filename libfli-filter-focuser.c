@@ -173,7 +173,7 @@ long fli_filter_focuser_open(flidev_t dev)
 
   CHKDEVICE(dev);
 
-  DEVICE->io_timeout = 200;
+  DEVICE->io_timeout = 2000;
 
   wlen = 2;
   rlen = 2;
@@ -949,7 +949,7 @@ static long fli_stepmotor(flidev_t dev, long steps, long block)
 		}
 
 		dir = steps;
-		steps = abs(steps);
+		steps = labs(steps);
 		while (steps > 0)
 		{
 			if ((steps > 4095) && (fdata->extent < 10000))
@@ -1033,7 +1033,7 @@ static long fli_stepmotor(flidev_t dev, long steps, long block)
 				IO(dev, buf, &wlen, &rlen);
 				stepsleft = ntohs(buf[0]);
 
-				if (((clock() - begin) / CLOCKS_PER_SEC) > timeout)
+				if (((clock() - begin) / CLOCKS_PER_SEC) > (clock_t)timeout)
 				{
 					debug(FLIDEBUG_WARN, "A device timeout has occurred.");
 					return -EIO;
@@ -1045,7 +1045,7 @@ static long fli_stepmotor(flidev_t dev, long steps, long block)
 	{
 		unsigned short cmd;
 		dir = steps;
-		steps = abs(steps);
+		steps = labs(steps);
 
 		if (dir < 0)
 		{
@@ -1274,7 +1274,7 @@ static long fli_getstepperstatus(flidev_t dev, flistatus_t *status)
 	/* Older hardware */
 	if (fdata->hwtype < 0xfe)
 	{
-		long pos;
+		long pos = 0;
 		if ((r = fli_getstepsremaining(dev, &pos)) == 0)
 		{
 			*status = FLI_FOCUSER_STATUS_LEGACY;
@@ -1638,7 +1638,7 @@ static long fli_getfiltername(flidev_t dev, long filter, char *name, size_t len)
 			{
 				to = 256 + wp1 * 8;
 
-				if ((bi != 0) && (*(fdata->nameinfobuf + to) != '\0'));
+				if ((bi != 0) && (*(fdata->nameinfobuf + to) != '\0'))
 				{
 					name[bi] = '/';
 					bi ++;

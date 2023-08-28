@@ -73,7 +73,13 @@ typedef long flidomain_t;
 #define FLIDEVICE_FOCUSER (0x300)
 #define FLIDEVICE_HS_FILTERWHEEL (0x0400)
 #define FLIDEVICE_RAW (0x0f00)
+#define FLIDOMAIN_DEVICE_MASK (0x0f00)
+
+/* The following two are really the same. ..._CONNECTION is old (deprecated) */
 #define FLIDEVICE_ENUMERATE_BY_CONNECTION (0x8000)
+#define FLIDEVICE_ENUMERATE_BY_SERIAL (0x8000)
+#define FLIDOMAIN_OPTIONS_MASK (0xf000)
+
 
 /**
    The frame type for an FLI CCD camera device.  Valid frame types are

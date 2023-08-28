@@ -54,6 +54,7 @@
 #include "libfli-libfli.h"
 #include "libfli-mem.h"
 
+
 #define DEFAULT_NUM_POINTERS (1024)
 
 static struct _mem_ptrs {

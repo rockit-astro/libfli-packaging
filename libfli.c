@@ -185,8 +185,8 @@ static long fli_freelist(char **names)
 }
 
 /* This is for FLI INTERNAL USE ONLY */
-long linux_bulktransfer(flidev_t dev, int ep, void *buf, long *len);
-#define usb_bulktransfer linux_bulktransfer
+long libusb_bulktransfer(flidev_t dev, int ep, void *buf, long *len);
+#define usb_bulktransfer libusb_bulktransfer
 
 LIBFLIAPI FLIStartVideoMode(flidev_t dev)
 {
