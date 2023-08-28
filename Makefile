@@ -42,20 +42,6 @@ package: libfli.so
 install: libfli.so
 	cp libfli.so /usr/local/lib
 
-doc: doc-html doc-pdf
-
-.PHONY: doc-html
-doc-html: libfli.dxx libfli.h libfli.c
-	doc++ -d doc $<
-
-.PHONY: doc-pdf
-doc-pdf: libfli.dxx libfli.h libfli.c
-	(test -d pdf || mkdir pdf) && cp docxx.sty pdf
-	doc++ -t $< | sed 's///g' > pdf/libfli.tex
-	cd pdf && latex libfli.tex && latex libfli.tex
-	cd pdf && dvips -o libfli.ps libfli.dvi && ps2pdf libfli.ps
-	mv pdf/libfli.pdf . && rm -rf pdf
-
 .PHONY: clean
 clean:
 	rm -f $(ALLOBJ) libfli.o libfli.a
