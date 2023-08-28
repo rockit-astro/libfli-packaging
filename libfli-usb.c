@@ -48,12 +48,12 @@
 #include "libfli-sys.h"
 #include "libfli-usb.h"
 
-long unix_usbio(flidev_t dev, void *buf, long *wlen, long *rlen)
+long libusb_usbio(flidev_t dev, void *buf, long *wlen, long *rlen)
 {
   int err = 0, locked = 0;
   long org_wlen = *wlen, org_rlen = *rlen;
 
-  if ((err = unix_fli_lock(dev)))
+  if ((err = fli_lock(dev)))
   {
     debug(FLIDEBUG_WARN, "Lock failed");
     goto done;
@@ -63,7 +63,7 @@ long unix_usbio(flidev_t dev, void *buf, long *wlen, long *rlen)
 
   if (*wlen > 0)
   {
-    if ((err = unix_bulkwrite(dev, buf, wlen)))
+    if ((err = libusb_bulkwrite(dev, buf, wlen)))
     {
       debug(FLIDEBUG_WARN, "Bulkwrite failed, wrote %d of %d bytes",
 	    *wlen, org_wlen);
@@ -73,7 +73,7 @@ long unix_usbio(flidev_t dev, void *buf, long *wlen, long *rlen)
 
   if (*rlen > 0)
   {
-    if ((err = unix_bulkread(dev, buf, rlen)))
+    if ((err = libusb_bulkread(dev, buf, rlen)))
     {
       debug(FLIDEBUG_WARN, "Bulkread failed, read %d of %d bytes",
 	    *rlen, org_rlen);
@@ -87,7 +87,7 @@ long unix_usbio(flidev_t dev, void *buf, long *wlen, long *rlen)
   {
     int r;
 
-    if ((r = unix_fli_unlock(dev)))
+    if ((r = fli_unlock(dev)))
       debug(FLIDEBUG_WARN, "Unlock failed");
     if (err == 0)
       err = r;

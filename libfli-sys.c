@@ -63,9 +63,9 @@
 #include "libfli-sys.h"
 #include "libfli-usb.h"
 
-static long unix_fli_list_usb(flidomain_t domain, char ***names);
+static long fli_list_usb(flidomain_t domain, char ***names);
 
-long unix_fli_connect(flidev_t dev, char *name, long domain)
+long fli_connect(flidev_t dev, char *name, long domain)
 {
   fli_unixio_t *io = NULL;
   pthread_mutex_t mutex;
@@ -79,9 +79,9 @@ long unix_fli_connect(flidev_t dev, char *name, long domain)
     return -EINVAL;
 
   /* Lock functions should be set before any other functions used */
-  DEVICE->fli_lock = unix_fli_lock;
-  DEVICE->fli_unlock = unix_fli_unlock;
-  DEVICE->fli_trylock = unix_fli_trylock;
+  DEVICE->fli_lock = fli_lock;
+  DEVICE->fli_unlock = fli_unlock;
+  DEVICE->fli_trylock = fli_trylock;
   
   DEVICE->domain = domain & 0x00ff;
   DEVICE->devinfo.type = domain & 0xff00;
@@ -125,9 +125,9 @@ long unix_fli_connect(flidev_t dev, char *name, long domain)
     {
       int r;
 
-      if ((r = unix_usb_connect(dev, io, name)))
+      if ((r = libusb_usb_connect(dev, io, name)))
       {
-				unix_usb_disconnect(dev,io);
+				libusb_usb_disconnect(dev,io);
         xfree(io);
         return r;
       }
@@ -138,7 +138,7 @@ long unix_fli_connect(flidev_t dev, char *name, long domain)
           if (!((DEVICE->devinfo.devid == FLIUSB_CAM_ID) ||
           	(DEVICE->devinfo.devid == FLIUSB_PROLINE_ID)))
           {
-						unix_usb_disconnect(dev,io);
+						libusb_usb_disconnect(dev,io);
             xfree(io);
             return -ENODEV;
           }
@@ -147,7 +147,7 @@ long unix_fli_connect(flidev_t dev, char *name, long domain)
         case FLIDEVICE_FOCUSER:
           if (DEVICE->devinfo.devid != FLIUSB_FOCUSER_ID)
           {
-						unix_usb_disconnect(dev,io);
+						libusb_usb_disconnect(dev,io);
             xfree(io);
             return -ENODEV;
           }
@@ -158,7 +158,7 @@ long unix_fli_connect(flidev_t dev, char *name, long domain)
           	(DEVICE->devinfo.devid == FLIUSB_CFW4_ID)))
           {
             debug(FLIDEBUG_INFO, "FW Not Recognized");
-						unix_usb_disconnect(dev,io);
+						libusb_usb_disconnect(dev,io);
             xfree(io);
             return -ENODEV;
           }
@@ -166,12 +166,12 @@ long unix_fli_connect(flidev_t dev, char *name, long domain)
 
         default:
           debug(FLIDEBUG_INFO, "Device Not Recognized");
-					unix_usb_disconnect(dev,io);
+					libusb_usb_disconnect(dev,io);
           xfree(io);
           return -ENODEV;
       }
       
-      DEVICE->fli_io = unix_usbio;
+      DEVICE->fli_io = libusb_usbio;
     }
     break;
 
@@ -182,7 +182,7 @@ long unix_fli_connect(flidev_t dev, char *name, long domain)
 
   if((sys = xcalloc(1, sizeof(fli_unixsysinfo_t))) == NULL)
   {
-    unix_fli_disconnect(dev);
+    fli_disconnect(dev);
     return -ENOMEM;
   }
   DEVICE->sys_data = sys;
@@ -212,7 +212,7 @@ long unix_fli_connect(flidev_t dev, char *name, long domain)
   return 0;
 }
 
-long unix_fli_disconnect(flidev_t dev)
+long fli_disconnect(flidev_t dev)
 {
   int err = 0;
   fli_unixio_t *io;
@@ -232,7 +232,7 @@ long unix_fli_disconnect(flidev_t dev)
   switch (DEVICE->domain)
   {
   case FLIDOMAIN_USB:
-    err = unix_usb_disconnect(dev,io);
+    err = libusb_usb_disconnect(dev,io);
     break;
 
   default:
@@ -264,7 +264,7 @@ long unix_fli_disconnect(flidev_t dev)
 
 #if defined(_USE_PTHREAD_LOCK_)
 
-long unix_fli_lock(flidev_t dev)
+long fli_lock(flidev_t dev)
 {
   long r = -ENODEV;
   fli_unixsysinfo_t *sys;
@@ -292,7 +292,7 @@ long unix_fli_lock(flidev_t dev)
   return r;
 }
 
-long unix_fli_unlock(flidev_t dev)
+long fli_unlock(flidev_t dev)
 {
   int r = -ENODEV;
   fli_unixsysinfo_t *sys;
@@ -320,7 +320,7 @@ long unix_fli_unlock(flidev_t dev)
   return r;
 }
 
-long unix_fli_trylock(flidev_t dev)
+long fli_trylock(flidev_t dev)
 {
   long r = -ENODEV;
   fli_unixsysinfo_t *sys;
@@ -348,7 +348,7 @@ long unix_fli_trylock(flidev_t dev)
 
 #elif defined(_USE_FLOCK_)
 
-long unix_fli_lock(flidev_t dev)
+long fli_lock(flidev_t dev)
 {
   fli_unixio_t *io = DEVICE->io_data;
 
@@ -361,7 +361,7 @@ long unix_fli_lock(flidev_t dev)
     return 0;
 }
 
-long unix_fli_unlock(flidev_t dev)
+long fli_unlock(flidev_t dev)
 {
   fli_unixio_t *io = DEVICE->io_data;
 
@@ -374,7 +374,7 @@ long unix_fli_unlock(flidev_t dev)
     return 0;
 }
 
-long unix_fli_trylock(flidev_t dev)
+long fli_trylock(flidev_t dev)
 {
   (void)dev;
   return -ENODEV;
@@ -385,7 +385,7 @@ long unix_fli_trylock(flidev_t dev)
 //#define PUBLIC_DIR "/var/spool/lock"
 #define PUBLIC_DIR "/tmp"
 
-long unix_fli_lock(flidev_t dev)
+long fli_lock(flidev_t dev)
 {
   int fd, err = 0, locked = 0, i;
   char tmpf[] = PUBLIC_DIR "/temp.XXXXXX", lockf[PATH_MAX], name[PATH_MAX];
@@ -474,7 +474,7 @@ long unix_fli_lock(flidev_t dev)
   return err;
 }
 
-long unix_fli_unlock(flidev_t dev)
+long fli_unlock(flidev_t dev)
 {
   char lockf[PATH_MAX], name[PATH_MAX];
   FILE *f;
@@ -511,7 +511,7 @@ long unix_fli_unlock(flidev_t dev)
   return 0;
 }
 
-long unix_fli_trylock(flidev_t dev)
+long fli_trylock(flidev_t dev)
 {
   (void)dev;
   return -ENODEV;
@@ -521,14 +521,14 @@ long unix_fli_trylock(flidev_t dev)
 
 #endif /* defined(_USE_FLOCK_) */
 
-long unix_fli_list(flidomain_t domain, char ***names)
+long fli_list(flidomain_t domain, char ***names)
 {
   *names = NULL;
 
   switch (domain & 0x00ff)
   {
   case FLIDOMAIN_USB:
-    return unix_fli_list_usb(domain, names);
+    return fli_list_usb(domain, names);
     break;
 
   default:
@@ -539,8 +539,7 @@ long unix_fli_list(flidomain_t domain, char ***names)
   return -EINVAL;
 }
 
-long unix_fli_list_glob(char *pattern, flidomain_t domain,
-			       char ***names)
+long fli_list_glob(char *pattern, flidomain_t domain, char ***names)
 {
   int retval, found = 0;
   size_t i;
@@ -606,7 +605,7 @@ long unix_fli_list_glob(char *pattern, flidomain_t domain,
   return 0;
 }
 
-static long unix_fli_list_usb(flidomain_t domain, char ***names)
+static long fli_list_usb(flidomain_t domain, char ***names)
 {
-  return unix_usb_list(USB_GLOB, domain, names);
+  return libusb_list(USB_GLOB, domain, names);
 }

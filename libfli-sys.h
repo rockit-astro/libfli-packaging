@@ -59,10 +59,6 @@
 #define _USE_PTHREAD_LOCK_
 #define USB_GLOB "/dev/fliusb*"
 
-#define fli_connect unix_fli_connect
-#define fli_disconnect unix_fli_disconnect
-#define fli_list unix_fli_list
-
 typedef struct {
   int fd;
   void *han;
@@ -75,11 +71,11 @@ typedef struct {
   long OS;
 } fli_unixsysinfo_t;
 
-long unix_fli_connect(flidev_t dev, char *name, long domain);
-long unix_fli_disconnect(flidev_t dev);
-long unix_fli_lock(flidev_t dev);
-long unix_fli_unlock(flidev_t dev);
-long unix_fli_trylock(flidev_t dev);
-long unix_fli_list(flidomain_t domain, char ***names);
+long fli_connect(flidev_t dev, char *name, long domain);
+long fli_disconnect(flidev_t dev);
+long fli_lock(flidev_t dev);
+long fli_unlock(flidev_t dev);
+long fli_trylock(flidev_t dev);
+long fli_list(flidomain_t domain, char ***names);
 
 #endif /* _LIBFLI_SYS_H */
