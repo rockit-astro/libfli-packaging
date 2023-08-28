@@ -892,10 +892,6 @@ long fli_camera_command(flidev_t dev, int cmd, int argc, ...)
 			else
 			{
 				long bgflush;
-				flicamdata_t *cam;
-
-				cam = DEVICE->device_data;
-
 				bgflush = *va_arg(ap, long *);
 
 				switch (DEVICE->domain)

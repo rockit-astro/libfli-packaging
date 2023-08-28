@@ -1233,7 +1233,6 @@ static long fli_homedevice(flidev_t dev, long block)
 	}
 	else /* New HW */
 	{
-		clock_t begin;
 		unsigned short stepsleft;
 
 		rlen = 2; wlen = 2;
@@ -1244,7 +1243,6 @@ static long fli_homedevice(flidev_t dev, long block)
 			debug(FLIDEBUG_WARN, "Invalid echo.");
 			return -EIO;
 		}
-		begin = clock();
 		stepsleft = 0x04;
 		while ( ((stepsleft & 0x04) != 0) && (block != 0) )
 		{
