@@ -44,18 +44,12 @@
 #ifndef _LIBFLI_USB_H_
 #define _LIBFLI_USB_H_
 
-#define unix_bulkwrite		linux_bulkwrite
-#define unix_bulkread		linux_bulkread
-#define unix_usb_connect	linux_usb_connect
-#define unix_usb_disconnect	linux_usb_disconnect
-#define unix_bulktransfer	linux_bulktransfer
-
-long unix_bulkwrite(flidev_t dev, void *buf, long *wlen);
-long unix_bulkread(flidev_t dev, void *buf, long *rlen);
-long unix_usbio(flidev_t dev, void *buf, long *wlen, long *rlen);
-long unix_usb_connect(flidev_t dev, fli_unixio_t *io, char *name);
-long unix_usb_disconnect(flidev_t dev);
-long unix_bulktransfer(flidev_t dev, int ep, void *buf, long *len);
-#define usb_bulktransfer unix_bulktransfer /* XXX */
+long libusb_bulkwrite(flidev_t dev, void *buf, long *wlen);
+long libusb_bulkread(flidev_t dev, void *buf, long *rlen);
+long libusb_bulktransfer(flidev_t dev, int ep, void *buf, long *len);
+long libusb_usbio(flidev_t dev, void *buf, long *wlen, long *rlen);
+long libusb_usb_connect(flidev_t dev, fli_unixio_t *io, char *name);
+long libusb_usb_disconnect(flidev_t dev, fli_unixio_t *io);
+long libusb_list(flidomain_t domain, char ***names);
 
 #endif /* _LIBFLI_USB_H_ */

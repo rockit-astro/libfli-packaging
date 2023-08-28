@@ -21,14 +21,14 @@ ARFLAGS	= -rus
 SYS	= libfli-sys.o
 DEBUG	= libfli-debug.o
 MEM	= libfli-mem.o
-IO	= libfli-usb.o libfli-usb-sys.o
+IO	= libfli-usb.o
 CAM	= libfli-camera.o libfli-camera-usb.o
 FILT	= libfli-filter-focuser.o
 
 ALLOBJ	= $(SYS) $(DEBUG) $(MEM) $(IO) $(CAM) $(FILT)
 
 libfli.so: libfli.o $(ALLOBJ)
-	$(CC) -shared -o $@ $^
+	$(CC) -shared -lusb-1.0 -o $@ $^
 
 package: libfli.so
 	mkdir -p build

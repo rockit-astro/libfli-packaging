@@ -185,8 +185,7 @@ static long fli_freelist(char **names)
 }
 
 /* This is for FLI INTERNAL USE ONLY */
-long linux_bulktransfer(flidev_t dev, int ep, void *buf, long *len);
-#define usb_bulktransfer linux_bulktransfer
+long libusb_bulktransfer(flidev_t dev, int ep, void *buf, long *len);
 
 LIBFLIAPI FLIStartVideoMode(flidev_t dev)
 {
@@ -211,7 +210,7 @@ LIBFLIAPI FLIGrabVideoFrame(flidev_t dev, void *buff, size_t size)
 
 LIBFLIAPI FLIUsbBulkIO(flidev_t dev, int ep, void *buf, long *len)
 {
-	return usb_bulktransfer(dev, ep, buf, len);
+	return libusb_bulktransfer(dev, ep, buf, len);
 }
 
 LIBFLIAPI FLIGrabFrame(flidev_t dev, void* buff,

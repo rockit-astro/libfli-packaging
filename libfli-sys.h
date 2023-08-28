@@ -45,6 +45,7 @@
 #define _LIBFLI_SYS_H
 
 #include <limits.h>
+#include <pthread.h>
 
 #define LIBFLIAPI long
 
@@ -53,23 +54,26 @@
 #endif
 
 #define __SYSNAME__ "Linux"
-#define __LIBFLI_MINOR__ 104
+#define __LIBFLI_MINOR__ 999.1
 #define USB_READ_SIZ_MAX (1024 * 64)
-#define _USE_FLOCK_
-#define USB_GLOB "/dev/fliusb*"
 
 typedef struct {
   int fd;
+  void *han;
 } fli_unixio_t;
 
-long unix_fli_connect(flidev_t dev, char *name, long domain);
-long unix_fli_disconnect(flidev_t dev);
-long unix_fli_lock(flidev_t dev);
-long unix_fli_unlock(flidev_t dev);
-long unix_fli_list(flidomain_t domain, char ***names);
+typedef struct {
+  pthread_mutex_t mutex;
+  pthread_mutexattr_t attr;
+  long locked;
+  long OS;
+} fli_unixsysinfo_t;
 
-#define fli_connect unix_fli_connect
-#define fli_disconnect unix_fli_disconnect
-#define fli_list unix_fli_list
+long fli_connect(flidev_t dev, char *name, long domain);
+long fli_disconnect(flidev_t dev);
+long fli_lock(flidev_t dev);
+long fli_unlock(flidev_t dev);
+long fli_trylock(flidev_t dev);
+long fli_list(flidomain_t domain, char ***names);
 
 #endif /* _LIBFLI_SYS_H */

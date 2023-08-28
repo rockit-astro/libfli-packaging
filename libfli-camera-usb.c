@@ -1141,7 +1141,7 @@ long fli_camera_usb_grab_row(flidev_t dev, void *buff, size_t width)
 
 #endif
 
-				if ((usb_bulktransfer(dev, 0x82, &cam->gbuf[loadindex], &rlen)) != 0) /* Grab the buffer */
+				if ((libusb_bulktransfer(dev, 0x82, &cam->gbuf[loadindex], &rlen)) != 0) /* Grab the buffer */
 				{
 					debug(FLIDEBUG_FAIL, "Read failed...");
 					abort = 1;
@@ -1418,7 +1418,7 @@ long fli_camera_usb_grab_row(flidev_t dev, void *buff, size_t width)
 				memset(cam->gbuf, 0x00, rlen);
 				rtotal = rlen;
 
-				if ((usb_bulktransfer(dev, 0x82, cam->gbuf, &rlen)) != 0) /* Grab the buffer */
+				if ((libusb_bulktransfer(dev, 0x82, cam->gbuf, &rlen)) != 0) /* Grab the buffer */
 				{
 					debug(FLIDEBUG_FAIL, "Read failed...");
 					abort = 1;
