@@ -60,13 +60,9 @@
 #include "libfli-camera.h"
 #include "libfli-filter-focuser.h"
 #include "libfli-sys.h"
-#include "libfli-parport.h"
 #include "libfli-usb.h"
-#include "libfli-serial.h"
 
-static long unix_fli_list_parport(flidomain_t domain, char ***names);
 static long unix_fli_list_usb(flidomain_t domain, char ***names);
-static long unix_fli_list_serial(flidomain_t domain, char ***names);
 
 long unix_fli_connect(flidev_t dev, char *name, long domain)
 {
@@ -98,10 +94,6 @@ long unix_fli_connect(flidev_t dev, char *name, long domain)
 
   switch (DEVICE->domain)
   {
-  case FLIDOMAIN_PARALLEL_PORT:
-    DEVICE->fli_io = unix_parportio;
-    break;
-
   case FLIDOMAIN_USB:
     {
       int r;
@@ -114,10 +106,6 @@ long unix_fli_connect(flidev_t dev, char *name, long domain)
       }
       DEVICE->fli_io = unix_usbio;
     }
-    break;
-
-  case FLIDOMAIN_SERIAL:
-    DEVICE->fli_io = unix_serialio;
     break;
 
   default:
@@ -364,18 +352,9 @@ long unix_fli_list(flidomain_t domain, char ***names)
 
   switch (domain & 0x00ff)
   {
-  case FLIDOMAIN_PARALLEL_PORT:
-    return unix_fli_list_parport(domain, names);
-    break;
-
   case FLIDOMAIN_USB:
     return unix_fli_list_usb(domain, names);
     break;
-
-  case FLIDOMAIN_SERIAL:
-    return unix_fli_list_serial(domain, names);
-    break;
-
   default:
     return -EINVAL;
   }
@@ -450,28 +429,7 @@ static long unix_fli_list_glob(char *pattern, flidomain_t domain,
   return 0;
 }
 
-#ifdef __linux__
-
-static long unix_fli_list_parport(flidomain_t domain, char ***names)
-{
-  return unix_fli_list_glob(PARPORT_GLOB, domain, names);
-}
-
-#else
-
-static long unix_fli_list_parport(flidomain_t domain, char ***names)
-{
-  return -EINVAL;
-}
-
-#endif
-
 static long unix_fli_list_usb(flidomain_t domain, char ***names)
 {
   return unix_fli_list_glob(USB_GLOB, domain, names);
-}
-
-static long unix_fli_list_serial(flidomain_t domain, char ***names)
-{
-  return unix_fli_list_glob(SERIAL_GLOB, domain, names);
 }
