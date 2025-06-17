@@ -33,7 +33,7 @@ libfli.so: libfli.o $(ALLOBJ)
 package: libfli.so
 	mkdir -p build
 	${RPMBUILD} -ba libfli.spec
-	mv build/x86_64/*.rpm .
+	mv build/*/*.rpm .
 	rm -rf build
 
 install: libfli.so

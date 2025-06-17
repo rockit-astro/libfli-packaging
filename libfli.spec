@@ -1,11 +1,11 @@
 Name:      libfli
 Version:   1.104
-Release:   0
+Release:   1%{dist}
 Url:       https://github.com/rockit-astro/libfli-packaging
 Summary:   Repackaged FLI SDK library
 License:   Unspecified
 Group:     Unspecified
-BuildArch: x86_64
+BuildArch: x86_64 aarch64
 
 %description
 
